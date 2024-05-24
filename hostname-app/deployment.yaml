@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostname-app
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: hostname-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: hostname-app
+    spec:
+      containers:
+      - name: hostname-app
+        image: titolu/hostname-app:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hostname-app-service
+  namespace: default
+  #annotations: service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+  labels:
+    app: hostname-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: hostname-app
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
